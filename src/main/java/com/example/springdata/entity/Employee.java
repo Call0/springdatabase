@@ -3,15 +3,15 @@ package com.example.springdata.entity;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.MongoId;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
 
-@Document
+@RedisHash
 @Getter
 @Setter
 public class Employee {
 
-    @MongoId
+    @Id
     private Long id;
     private String name;
     private String departmentName;
