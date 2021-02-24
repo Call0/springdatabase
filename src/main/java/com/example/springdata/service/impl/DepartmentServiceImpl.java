@@ -8,6 +8,9 @@ import com.example.springdata.service.DepartmentService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.jvm.hotspot.ui.DeadlockDetectionPanel;
+
+import java.util.Optional;
 
 @Service
 public class DepartmentServiceImpl implements DepartmentService {
@@ -23,5 +26,19 @@ public class DepartmentServiceImpl implements DepartmentService {
         departmentRepository.save(department);
         BeanUtils.copyProperties(department, departmentResponseDTO);
         return departmentResponseDTO;
+    }
+
+    @Override
+    public Department getDepartment(Long id) {
+        /*
+        Optional<Department> optionalDepartment = departmentRepository.findById(id);
+        Department department = new Department();
+        if(optionalDepartment.isPresent()){
+            BeanUtils.copyProperties(optionalDepartment.get(), department);
+        }
+        return department;
+        */
+
+        return departmentRepository.findById(id).get();
     }
 }
