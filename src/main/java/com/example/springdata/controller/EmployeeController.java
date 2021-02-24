@@ -2,6 +2,7 @@ package com.example.springdata.controller;
 
 import com.example.springdata.dto.EmployeeRequestDTO;
 import com.example.springdata.dto.EmployeeResponseDTO;
+import com.example.springdata.entity.Employee;
 import com.example.springdata.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -47,5 +48,10 @@ public class EmployeeController {
     @GetMapping(path="department/{id}")
     public List<EmployeeResponseDTO> getEmployeeListByDepartment(@PathVariable("id") Long departmentId){
         return  employeeService.getEmployeeListByDepartment(departmentId);
+    }
+
+    @GetMapping(path = "/mostExperienced")
+    public List<Employee> getEmployeeWithMostExperience(){
+        return employeeService.getEmployeeWithMostExperience();
     }
 }

@@ -140,4 +140,11 @@ public class EmployeeServiceImpl implements EmployeeService {
         }
         return employeeResponseDTOList;
     }
+
+    @Override
+    public List<Employee> getEmployeeWithMostExperience() {
+        List<Employee> employeeList;
+        employeeList = employeeRepository.getMostExperiencedEmployee();
+        return employeeList;
+    }
 }

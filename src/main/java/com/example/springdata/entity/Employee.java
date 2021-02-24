@@ -21,6 +21,7 @@ public class Employee {
     private Long id;
     private String name;
     private String code;
+    private Integer yearsOfExperience;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference

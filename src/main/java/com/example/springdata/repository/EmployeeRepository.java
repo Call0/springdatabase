@@ -28,4 +28,7 @@ public interface EmployeeRepository extends CrudRepository<Employee, Long> {
     // @Query("SELECT e FROM Employee (SQL table name, not java class name) e WHERE e.department.id = ?1")
     @Query(value = "SELECT * FROM employee e WHERE e.department_id = ?1", nativeQuery = true)
     List<Employee> getEmployeeListByNativeQuery(Long departmentId);
+
+    @Query(value = "SELECT * FROM employee e WHERE e.years_of_experience IN (SELECT MAX(years_of_experience) FROM employee)", nativeQuery = true)
+    List<Employee> getMostExperiencedEmployee();
 }
