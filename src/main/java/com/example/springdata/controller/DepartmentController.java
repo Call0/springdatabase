@@ -23,4 +23,9 @@ public class DepartmentController {
     public Department getDepartment(@PathVariable("id") Long id){
         return departmentService.getDepartment(id);
     }
+
+    @PutMapping(path="/{id}" )
+    public DepartmentResponseDTO updateDepartment(@RequestBody DepartmentRequestDTO departmentRequestDTO, @PathVariable("id") Long id){
+        return departmentService.updateDepartment(departmentRequestDTO, id);
+    }
 }

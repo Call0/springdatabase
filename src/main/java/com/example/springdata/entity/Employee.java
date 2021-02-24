@@ -20,6 +20,7 @@ public class Employee {
     @GeneratedValue(generator = "employee_id_seq", strategy = GenerationType.AUTO)
     private Long id;
     private String name;
+    private String code;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonBackReference
