@@ -1,29 +1,48 @@
 package com.example.springdata.service.impl;
 
+
 import com.example.springdata.dto.EmployeeRequestDTO;
 import com.example.springdata.dto.EmployeeResponseDTO;
+import com.example.springdata.entity.Department;
 import com.example.springdata.entity.Employee;
+import com.example.springdata.repository.DepartmentRepository;
 import com.example.springdata.repository.EmployeeRepository;
 import com.example.springdata.service.EmployeeService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
-    EmployeeRepository employeeRepository;
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private DepartmentRepository departmentRepository;
 
     @Override
     public EmployeeResponseDTO createEmployee(EmployeeRequestDTO requestDTO) {
-        EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
         Employee employee = new Employee();
+        Optional<Department> departmentOptional = departmentRepository.findById(requestDTO.getDepartment().getId());
+        if(departmentOptional.isPresent()){
+            employee.setDepartment(departmentOptional.get());
+        } else{
+            Department department = new Department();
+            department.setName(requestDTO.getDepartment().getName());
+            employee.setDepartment(department);
+        }
+        EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
         BeanUtils.copyProperties(requestDTO, employee);
         Employee savedEmployee = employeeRepository.save(employee);
         BeanUtils.copyProperties(savedEmployee, responseDTO);
+
+        responseDTO.setDepartmentFromEntity(savedEmployee.getDepartment());
+
         return  responseDTO;
     }
 
@@ -53,6 +72,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         if(list.isPresent()){
             EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
             BeanUtils.copyProperties(list.get(), responseDTO);
+            responseDTO.setDepartmentFromEntity(list.get().getDepartment());
             return responseDTO;
         }
         return null;
@@ -71,9 +91,20 @@ public class EmployeeServiceImpl implements EmployeeService {
             EmployeeResponseDTO responseDTO = new EmployeeResponseDTO();
             Employee employeeFromDb = list.get();
             employeeFromDb.setName(requestDTO.getName());
-            employeeFromDb.setDepartmentName(requestDTO.getDepartmentName());
+
+            Optional<Department> departmentOptional = departmentRepository.findById(requestDTO.getDepartment().getId());
+            if(departmentOptional.isPresent()){
+                employeeFromDb.setDepartment(departmentOptional.get());
+            } else{
+                Department department = new Department();
+                department.setName(requestDTO.getDepartment().getName());
+                employeeFromDb.setDepartment(department);
+            }
+
             BeanUtils.copyProperties(employeeFromDb, responseDTO);
             employeeRepository.save(employeeFromDb);
+
+            responseDTO.setDepartmentFromEntity(employeeFromDb.getDepartment());
             return responseDTO;
         }
         return null;
@@ -89,5 +120,20 @@ public class EmployeeServiceImpl implements EmployeeService {
             return responseDTO;
         }
         return null;
+    }
+
+
+    @Override
+    public List<EmployeeResponseDTO> getEmployeeListByDepartment(Long departmentId) {
+        Department department = departmentRepository.findById(departmentId).get();
+        List<Employee> employeeList = employeeRepository.findByDepartment(department);
+        List<EmployeeResponseDTO> employeeResponseDTOList = new ArrayList<>();
+        for (Employee employee : employeeList) {
+            EmployeeResponseDTO employeeResponseDTO = new EmployeeResponseDTO();
+            BeanUtils.copyProperties(employee, employeeResponseDTO);
+            employeeResponseDTO.setDepartmentFromEntity(employee.getDepartment());
+            employeeResponseDTOList.add(employeeResponseDTO);
+        }
+        return employeeResponseDTOList;
     }
 }
